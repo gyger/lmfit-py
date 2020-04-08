@@ -1102,16 +1102,25 @@ class StepModel(Model):
     r"""A model based on a Step function, with three Parameters:
     ``amplitude`` (:math:`A`), ``center`` (:math:`\mu`) and ``sigma`` (:math:`\sigma`).
 
-    There are four choices for ``form``:
+    There are eight choices for ``form``:
 
     - ``linear`` (the default)
     - ``atan`` or ``arctan`` for an arc-tangent function
     - ``erf`` for an error function
     - ``logistic`` for a logistic function (see https://en.wikipedia.org/wiki/Logistic_function)
 
+    and its inverted functions:
+
+    - ``invlinear``
+    - ``invatan`` or ``invarctan`` for an arc-tangent function
+    - ``inverf`` or ``inverc`` for the complementary error function
+    - ``invlogistic`` for the inverted logistic function
+
     The step function starts with a value 0, and ends with a value of
     :math:`A` rising to :math:`A/2` at :math:`\mu`, with :math:`\sigma`
-    setting the characteristic width. The functional forms are defined as:
+    setting the characteristic width. Prepending the ``inv`` to the lineshape, invertes the step direction
+    starting from :math:`A` ending at 0.0. 
+    The functional forms are defined as:
 
     .. math::
         :nowrap:
@@ -1120,7 +1129,11 @@ class StepModel(Model):
         & f(x; A, \mu, \sigma, {\mathrm{form={}'linear{}'}})  & = A \min{[1, \max{(0,  \alpha)}]} \\
         & f(x; A, \mu, \sigma, {\mathrm{form={}'arctan{}'}})  & = A [1/2 + \arctan{(\alpha)}/{\pi}] \\
         & f(x; A, \mu, \sigma, {\mathrm{form={}'erf{}'}})     & = A [1 + {\operatorname{erf}}(\alpha)]/2 \\
-        & f(x; A, \mu, \sigma, {\mathrm{form={}'logistic{}'}})& = A [1 - \frac{1}{1 +  e^{\alpha}} ]
+        & f(x; A, \mu, \sigma, {\mathrm{form={}'logistic{}'}})& = A [1 - \frac{1}{1 +  e^{\alpha}} ] \\
+        & f(x; A, \mu, \sigma, {\mathrm{form={}'invlinear{}'}})  & = A [1 - \min{[1, \max{(0,  \alpha)}]}] \\
+        & f(x; A, \mu, \sigma, {\mathrm{form={}'invarctan{}'}})  & = A [1/2 - \arctan{(\alpha)}/{\pi}] \\
+        & f(x; A, \mu, \sigma, {\mathrm{form={}'inverf{}'}})     & = A [1 - {\operatorname{erf}}(\alpha)]/2 \\
+        & f(x; A, \mu, \sigma, {\mathrm{form={}'invlogistic{}'}})& = A [\frac{1}{1 +  e^{\alpha}} ]
         \end{eqnarray*}
 
     where :math:`\alpha  = (x - \mu)/{\sigma}`.

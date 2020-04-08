@@ -353,25 +353,37 @@ def step(x, amplitude=1.0, center=0.0, sigma=1.0, form='linear'):
 
     where arg = (x - center)/sigma
 
+    The inverted forms of the functions that starts at amplitude, ends at 0.0
+    are available by prepending 'inv' to the name e.g. 'invlinear'.
+
     """
     out = (x - center)/max(tiny, sigma)
 
     if form == 'erf':
         out = 0.5*(1 + erf(out))
+    elif form == ('inverf', 'erfc'):
+        out = 0.5*(1 - erf(out))
     elif form == 'logistic':
         out = (1. - 1./(1. + exp(out)))
+    elif form == 'invlogistic':
+        out = 1. - (1. - 1./(1. + exp(out)))
     elif form in ('atan', 'arctan'):
         out = 0.5 + arctan(out)/pi
+    elif form in ('invatan', 'invarctan'):
+        out = 0.5 - arctan(out)/pi
     elif form == 'linear':
         out[where(out < 0)] = 0.0
         out[where(out > 1)] = 1.0
+    elif form == 'invlinear':
+        out = 1 - out
+        out[where(out < 0)] = 0
+        out[where(out > 1)] = 1
     else:
         msg = "Invalid value ('%s') for argument 'form'; should be one of %s."\
-               % (form, "'erf', 'logistic', 'atan', 'arctan', or 'linear'")
+               % (form, "'erf', 'logistic', 'atan', 'arctan', 'linear' or 'erfc', 'inverf', 'invlogistic', 'invatan', 'invarctan', 'invlinear' ")
         raise ValueError(msg)
 
     return amplitude*out
-
 
 def rectangle(x, amplitude=1.0, center1=0.0, sigma1=1.0,
               center2=1.0, sigma2=1.0, form='linear'):
